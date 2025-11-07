@@ -1,41 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play } from 'lucide-react';
-
 import { useNavigate } from 'react-router-dom';
 import './FilmesCartaz.css';
 
 interface Movie {
-  id: number;
-  title: string;
-  genres: string;
-  image: string;
+  _id?: string;
+  id?: number;
+  titulo: string;
+  tituloOriginal?: string;
+  subtitulo?: string;
+  sinopse?: string;
+  generos?: string[] | string;
+  imagem?: string;
 }
 
 const FilmesCartaz: React.FC = () => {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const [watchingMovies, setWatchingMovies] = useState<{ [key: number]: number }>({});
-  const [loadingMovies, setLoadingMovies] = useState<{ [key: number]: boolean }>({});
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [watchingMovies, setWatchingMovies] = useState<{ [key: string]: number }>({});
+  const [loadingMovies, setLoadingMovies] = useState<{ [key: string]: boolean }>({});
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  
- const movies: Movie[] = [
-    { id: 1, title: 'BUMBLEBEE', genres: 'Ação, Aventura, Ficção Científica', image: 'https://image.tmdb.org/t/p/w500/fw02ONlDhrYjTSZV8XO6hhU3ds3.jpg' },
-    { id: 2, title: 'CAPITÃ MARVEL', genres: 'Ação, Aventura, Ficção Científica', image: 'https://image.tmdb.org/t/p/w500/AtsgWhDnHTq68L0lLsUrCnM7TjG.jpg' },
-    { id: 3, title: 'ALITA: ANJO DE COMBATE', genres: 'Ação, Aventura, Ficção Científica', image: 'https://image.tmdb.org/t/p/w500/xRWht48C2V8XNfzvPehyClOvDni.jpg' },
-    { id: 4, title: 'COMO TREINAR O SEU DRAGÃO 3', genres: 'Animação, Aventura, Família', image: 'https://image.tmdb.org/t/p/w500/xvx4Yhf0DVH8G4LzNISpMfFBDy2.jpg' },
-    { id: 5, title: 'AQUAMAN', genres: 'Ação, Aventura, Fantasia', image: 'https://image.tmdb.org/t/p/w500/5Kg76ldv7VxeX9YlcQXiowHgdX6.jpg' },
-    { id: 6, title: 'O MENINO QUE QUERIA SER REI', genres: 'Ação, Aventura, Família, Fantasia', image: 'https://image.tmdb.org/t/p/w500/kBuvLX6zynQP0sjyqbXV4jNaZ4E.jpg' },
-    { id: 7, title: 'MEGARRROMÂNTICO', genres: 'Comédia, Romance', image: 'https://image.tmdb.org/t/p/w500/4zfRpFxZDZX98rJsGChBo5wZADQ.jpg' },
-    { id: 8, title: 'UMA NOVA CHANCE', genres: 'Comédia, Drama, Romance', image: 'https://image.tmdb.org/t/p/w500/6PQyCsluGYEPCTnlM9KxVs6GIuv.jpg' },
-    { id: 9, title: 'HOMEM-ARANHA NO ARANHAVERSO', genres: 'Ação, Animação, Ficção Científica', image: 'https://image.tmdb.org/t/p/w500/laMM4lpQSh5z6KIBPwWogkjzBVQ.jpg' },
-    { id: 10, title: 'MÁQUINAS MORTAIS', genres: 'Aventura, Ficção Científica', image: 'https://image.tmdb.org/t/p/w500/gLhYg9NIvIPKVRTtvzCWnp1qJWG.jpg' }
-  ];
+  // 🔥 Buscar filmes da API
+  useEffect(() => {
+    const fetchFilmes = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/filmes');
+        const data = await response.json();
+
+        console.log('📽️ Dados recebidos da API:', data);
+        setMovies(data.filmes || []); // ✅ Ajuste aqui
+      } catch (error) {
+        console.error('Erro ao buscar filmes:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFilmes();
+  }, []);
 
   const handlePlayClick = (e: React.MouseEvent, movie: Movie) => {
     e.stopPropagation();
-    if (loadingMovies[movie.id]) return;
+    const movieId = movie._id || movie.id?.toString() || '';
+    if (loadingMovies[movieId]) return;
 
-    setLoadingMovies(prev => ({ ...prev, [movie.id]: true }));
+    setLoadingMovies((prev) => ({ ...prev, [movieId]: true }));
     let progress = 0;
 
     const interval = setInterval(() => {
@@ -43,35 +54,48 @@ const FilmesCartaz: React.FC = () => {
       if (progress >= 100) {
         clearInterval(interval);
         setTimeout(() => {
-          setLoadingMovies(prev => ({ ...prev, [movie.id]: false }));
-          setWatchingMovies(prev => ({ ...prev, [movie.id]: 0 }));
+          setLoadingMovies((prev) => ({ ...prev, [movieId]: false }));
+          setWatchingMovies((prev) => ({ ...prev, [movieId]: 0 }));
 
-          // 👉 Envia para a página de detalhes
-          navigate(`/filmesdetalhes/${movie.id}`, { state: movie });
+          // 👉 Envia para página de detalhes com state
+          navigate(`/filmesdetalhes/${movieId}`, { state: movie });
         }, 200);
       } else {
-        setWatchingMovies(prev => ({ ...prev, [movie.id]: progress }));
+        setWatchingMovies((prev) => ({ ...prev, [movieId]: progress }));
       }
     }, 100);
   };
+
+  if (loading) {
+    return <div className="loading-text">Carregando filmes...</div>;
+  }
+
+  if (movies.length === 0) {
+    return <div className="loading-text">Nenhum filme encontrado 😕</div>;
+  }
 
   return (
     <div className="movies-section">
       <div className="movies-grid">
         {movies.map((movie) => {
-          const isHovered = hoveredCard === movie.id;
-          const isLoading = loadingMovies[movie.id];
-          const progress = watchingMovies[movie.id] || 0;
+          const movieId = movie._id || movie.id?.toString() || '';
+          const isHovered = hoveredCard === movieId;
+          const isLoading = loadingMovies[movieId];
+          const progress = watchingMovies[movieId] || 0;
 
           return (
             <div
-              key={movie.id}
+              key={movieId}
               className={`movie-card ${isHovered ? 'hovered' : ''}`}
-              onMouseEnter={() => setHoveredCard(movie.id)}
+              onMouseEnter={() => setHoveredCard(movieId)}
               onMouseLeave={() => setHoveredCard(null)}
             >
               <div className="movie-card-inner">
-                <img src={movie.image} alt={movie.title} className="movie-image" />
+                <img
+                  src={movie.imagem || 'https://via.placeholder.com/300x450?text=Sem+Imagem'}
+                  alt={movie.titulo}
+                  className="movie-image"
+                />
 
                 {isLoading && (
                   <>
@@ -105,8 +129,14 @@ const FilmesCartaz: React.FC = () => {
                 )}
 
                 <div className="movie-info">
-                  <h3 className="movie-title">{movie.title}</h3>
-                  {isHovered && <p className="movie-genres">{movie.genres}</p>}
+                  <h3 className="movie-title">{movie.titulo}</h3>
+                  {isHovered && (
+                    <p className="movie-genres">
+                      {Array.isArray(movie.generos)
+                        ? movie.generos.join(', ')
+                        : movie.generos || 'Gênero não informado'}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

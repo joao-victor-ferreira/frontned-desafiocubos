@@ -71,3 +71,318 @@
     margin-bottom: 10px;
     width: 100%;
 }
+
+
+/* Adicione este CSS aos seus arquivos FormularioLogin.css e FormularioRegistrar.css */
+
+/* ALERTA FLUTUANTE NO TOPO DIREITO */
+.mensagem-feedback-flutuante {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  max-width: 400px;
+  animation: slideInFromRight 0.4s ease-out;
+}
+
+.mensagem-feedback-flutuante.sucesso {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.mensagem-feedback-flutuante.erro {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.mensagem-icone {
+  font-size: 20px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.mensagem-feedback-flutuante p {
+  margin: 0;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+/* Desabilitar inputs durante carregamento */
+.form-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.login-form-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Animação de entrada pela direita */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsivo para mobile */
+@media (max-width: 768px) {
+  .mensagem-feedback-flutuante {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    font-size: 13px;
+    padding: 12px 16px;
+  }
+}
+
+/* Versão dark mode (opcional) */
+@media (prefers-color-scheme: dark) {
+  .mensagem-feedback-flutuante.sucesso {
+    background-color: #1e4620;
+    border-color: #2d5f2e;
+    color: #a8d5a8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .mensagem-feedback-flutuante.erro {
+    background-color: #4a1a1a;
+    border-color: #6b2c2c;
+    color: #f5a3a3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+
+/* MODAL DE REDIRECIONAMENTO - CENTRALIZADO E MELHORADO */
+.modal-overlay-redirecionamento {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeInOverlay 0.3s ease;
+}
+
+.modal-redirecionamento {
+  background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 100%);
+  color: #fff;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  animation: slideUp 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-redirecionamento::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ffb703, #fb8500, #ffb703);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease infinite;
+}
+
+.modal-icone {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  animation: bounceIn 0.6s ease;
+}
+
+.modal-redirecionamento h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.modal-redirecionamento p {
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  color: #b8b8b8;
+  line-height: 1.5;
+}
+
+/* Barra de progresso */
+.modal-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.modal-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffb703, #fb8500);
+  width: 0%;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(251, 133, 0, 0.5);
+}
+
+/* Botões */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.modal-redirecionamento button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  min-width: 140px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+  color: #000;
+  box-shadow: 0 4px 15px rgba(251, 133, 0, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 133, 0, 0.5);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.modal-redirecionamento button:active {
+  transform: translateY(0);
+}
+
+/* Animações */
+@keyframes fadeInOverlay {
+  from { 
+    opacity: 0;
+  }
+  to { 
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .modal-redirecionamento {
+    padding: 2rem 1.5rem;
+    max-width: 90%;
+  }
+
+  .modal-redirecionamento h2 {
+    font-size: 1.3rem;
+  }
+
+  .modal-redirecionamento p {
+    font-size: 0.9rem;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+  }
+
+  .modal-redirecionamento button {
+    width: 100%;
+    min-width: auto;
+  }
+}
