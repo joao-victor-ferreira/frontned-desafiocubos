@@ -1,0 +1,36 @@
+
+
+.footer-container{
+    height: 68px;
+    width: 100%;
+    background-color: #121113;
+    border-top: 1px solid #F1E6FD30;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.h1-footer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 400;
+    font-size: 16px;
+    color: #B5B2BC;
+     font-family: 'Montserrat', sans-serif;
+}
+
+.h2-footer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: #B5B2BC;
+    margin-left: 5px;
+     font-family: 'Montserrat', sans-serif;
+}
