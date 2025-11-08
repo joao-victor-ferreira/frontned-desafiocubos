@@ -1,102 +1,92 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { userService } from '../../../services/user.services';
+import { useToast } from '../../toast/useToast';
+import './FormularioRegistrar.css';
+import '../../../assets/css/Global.css';
 
-import { userService } from "../../../services/user.services";
-import "./FormularioRegistrar.css";
-import "../../../assets/css/Global.css"
+// Tipagem para o formulário
+interface RegisterFormData {
+  nome: string;
+  email: string;
+  senha: string;
+  senhaConfirm: string;
+}
 
-function FormularioRegistrar() {
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [senhaConfirm, setSenhaConfirm] = useState("");
-  const [mensagem, setMensagem] = useState("");
-  const [tipoMensagem, setTipoMensagem] = useState<"sucesso" | "erro" | "">("");
+const FormularioRegistrar: React.FC = () => {
+  const { showToast } = useToast();
+  const [formData, setFormData] = useState<RegisterFormData>({
+    nome: '',
+    email: '',
+    senha: '',
+    senhaConfirm: '',
+  });
   const [carregando, setCarregando] = useState(false);
 
+  // Função genérica para atualizar campos
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let { name, value } = e.target;
+
+    // Ajuste de nome e email: tudo minúsculo e espaços viram "_"
+    if (name === 'nome' || name === 'email') {
+      value = value.toLowerCase().replace(/\s+/g, '_');
+    }
+
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Validação do formulário
   const validarCampos = (): string | null => {
-    if (!nome.trim()) {
-      return "Por favor, insira seu nome";
-    }
+    const { nome, email, senha, senhaConfirm } = formData;
 
-    if (nome.trim().length < 3) {
-      return "Nome deve ter pelo menos 3 caracteres";
-    }
-
-    if (!email.trim()) {
-      return "Por favor, insira seu e-mail";
-    }
+    if (!nome.trim()) return 'Por favor, insira seu nome.';
+    if (nome.trim().length < 3) return 'O nome deve ter pelo menos 3 caracteres.';
+    if (!email.trim()) return 'Por favor, insira seu e-mail.';
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return "E-mail inválido";
-    }
+    if (!emailRegex.test(email)) return 'E-mail inválido.';
 
-    if (!senha) {
-      return "Por favor, insira uma senha";
-    }
-
-    if (senha.length < 6) {
-      return "Senha deve ter pelo menos 6 caracteres";
-    }
-
-    if (!senhaConfirm) {
-      return "Por favor, confirme sua senha";
-    }
-
-    if (senha !== senhaConfirm) {
-      return "As senhas não conferem";
-    }
+    if (!senha) return 'Por favor, insira uma senha.';
+    if (senha.length < 6) return 'A senha deve ter pelo menos 6 caracteres.';
+    if (!senhaConfirm) return 'Por favor, confirme sua senha.';
+    if (senha !== senhaConfirm) return 'As senhas não conferem.';
 
     return null;
   };
 
+  // Envio do formulário
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMensagem("");
-    setTipoMensagem("");
 
-    // Validar campos
     const erroValidacao = validarCampos();
     if (erroValidacao) {
-      setMensagem(erroValidacao);
-      setTipoMensagem("erro");
+      showToast(erroValidacao, 'erro');
       return;
     }
 
     setCarregando(true);
 
     try {
+      const { nome, email, senha } = formData;
       const response = await userService.register(nome, email, senha);
-      
-      setMensagem("Conta criada com sucesso! Faça login para continuar.");
-      setTipoMensagem("sucesso");
 
-      // Limpar campos após sucesso
-      setTimeout(() => {
-        setNome("");
-        setEmail("");
-        setSenha("");
-        setSenhaConfirm("");
-      }, 2000);
+      showToast('Conta criada com sucesso! Faça login para continuar.', 'sucesso');
 
-      console.log(response);
+      // Resetar formulário
+      setFormData({ nome: '', email: '', senha: '', senhaConfirm: '' });
     } catch (err: any) {
-      let mensagemErro = "Erro ao criar conta. Tente novamente.";
+      let mensagemErro = 'Erro ao criar conta. Tente novamente.';
 
-      if (err.message) {
-        if (err.message.includes("já existe") || err.message.includes("duplicado")) {
-          mensagemErro = "Este e-mail já está cadastrado";
-        } else if (err.message.includes("rede") || err.message.includes("network")) {
-          mensagemErro = "Erro de conexão. Verifique sua internet";
-        } else if (err.message.includes("inválido")) {
-          mensagemErro = "Dados inválidos. Verifique as informações";
-        } else {
-          mensagemErro = err.message;
-        }
+      if (err.response?.data?.message) {
+        const msg = err.response.data.message.toLowerCase();
+        if (msg.includes('e-mail') || msg.includes('email'))
+          mensagemErro = 'Este e-mail já está cadastrado.';
+        else if (msg.includes('nome')) mensagemErro = 'Este nome já está em uso.';
+        else mensagemErro = err.response.data.message;
+      } else if (err.message?.includes('network')) {
+        mensagemErro = 'Erro de conexão. Verifique sua internet.';
       }
 
-      setMensagem(mensagemErro);
-      setTipoMensagem("erro");
+      showToast(mensagemErro, 'erro');
     } finally {
       setCarregando(false);
     }
@@ -105,89 +95,84 @@ function FormularioRegistrar() {
   return (
     <div className="login-form-container">
       <div className="background-overlay" />
+
       <form className="registrar-form" onSubmit={handleSubmit}>
+        {/* Nome */}
         <div className="forms-group">
           <label htmlFor="nome" className="form-label">
             Nome
           </label>
           <input
-            type="text"
             id="nome"
+            name="nome"
+            type="text"
             className="form-input"
             placeholder="Digite seu nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
+            value={formData.nome}
+            onChange={handleChange}
             disabled={carregando}
           />
         </div>
 
+        {/* E-mail */}
         <div className="forms-group">
           <label htmlFor="email" className="form-label">
             E-mail
           </label>
           <input
-            type="email"
             id="email"
+            name="email"
+            type="email"
             className="form-input"
-            placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Digite seu e-mail"
+            value={formData.email}
+            onChange={handleChange}
             disabled={carregando}
           />
         </div>
 
+        {/* Senha */}
         <div className="forms-group">
           <label htmlFor="senha" className="form-label">
             Senha
           </label>
           <input
-            type="password"
             id="senha"
+            name="senha"
+            type="password"
             className="form-input"
             placeholder="Digite sua senha (mínimo 6 caracteres)"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            value={formData.senha}
+            onChange={handleChange}
             disabled={carregando}
           />
         </div>
 
+        {/* Confirmação de Senha */}
         <div className="forms-group">
           <label htmlFor="senhaConfirm" className="form-label">
-            Confirmação da senha
+            Confirme sua senha
           </label>
           <input
-            type="password"
             id="senhaConfirm"
+            name="senhaConfirm"
+            type="password"
             className="form-input"
             placeholder="Confirme sua senha"
-            value={senhaConfirm}
-            onChange={(e) => setSenhaConfirm(e.target.value)}
+            value={formData.senhaConfirm}
+            onChange={handleChange}
             disabled={carregando}
           />
         </div>
 
-        <div className="row-options-form">
-          <button 
-            type="submit" 
-            className="login-form-btn"
-            disabled={carregando}
-          >
-            {carregando ? "Registrando..." : "Registrar"}
+        <div className="row-options-registerform">
+          <button type="submit" className="registrar-form-btn" disabled={carregando}>
+            {carregando ? <span className="spinner" aria-label="Carregando"></span> : 'Cadastrar'}
           </button>
         </div>
-
       </form>
-
-      {mensagem && (
-        <div className={`mensagem-feedback-flutuante ${tipoMensagem}`}>
-          <span className="mensagem-icone">
-            {tipoMensagem === "sucesso" ? "✓" : "⚠"}
-          </span>
-          <p>{mensagem}</p>
-        </div>
-      )}
     </div>
   );
-}
+};
 
 export default FormularioRegistrar;

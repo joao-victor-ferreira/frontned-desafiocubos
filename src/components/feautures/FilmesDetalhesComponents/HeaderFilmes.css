@@ -1,65 +1,60 @@
-
-
-
-.header-filmes{
-    display: flex;
-    flex-direction: row;
-    margin-top: 30px;
-    width: 95%;
-    justify-content: space-between;
-    align-items: center;
-
+.header-filmes {
+  display: flex;
+  flex-direction: row;
+  margin-top: 30px;
+  width: 95%;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 99;
 }
 
-
-.h1-header-filmes-titulo{
-    font-size: 32px;
-    color: #EEEEF0;
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
+.h1-header-filmes-titulo {
+  font-size: 32px;
+  color: #eeeef0;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
 }
 
-.h1-header-filmes-subtitulo{
-     font-size: 16px;
-    color: #EEEEF0;
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
+.h1-header-filmes-subtitulo {
+  font-size: 16px;
+  color: #eeeef0;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
 }
 
-
-
-.buttons-filmes-deletar{
-    width: 91px;
-    height: 44px;
-    background-color: #B744F714;
-    color: 16px;
-    font-weight: 400;
-     font-family: 'Roboto', sans-serif;
-     border: none;
-     border-radius: 2px;
-     color: #F1DDFFFA;
-     margin-right: 10px;
+.buttons-filmes-deletar {
+  width: 91px;
+  height: 44px;
+  background-color: #b744f714;
+  color: 16px;
+  font-weight: 400;
+  font-family: 'Roboto', sans-serif;
+  border: none;
+  border-radius: 2px;
+  color: #f1ddfffa;
+  margin-right: 10px;
+  cursor: pointer;
 }
 
-
-.buttons-filmes-editar{
-     width: 82px;
-    height: 44px;
-    background-color: #8E4EC6;
-    color: 16px;
-    font-weight: 400;
-     font-family: 'Roboto', sans-serif;
-     border: none;
-     border-radius: 2px;
-     color: #FFFFFF;
+.buttons-filmes-editar {
+  width: 82px;
+  height: 44px;
+  background-color: #8e4ec6;
+  color: 16px;
+  font-weight: 400;
+  font-family: 'Roboto', sans-serif;
+  border: none;
+  border-radius: 2px;
+  color: #ffffff;
 }
 
-
-.bannerFilmes{
-    background-color: black;
-    width: 374px;
-    height: 542px;
-    border-radius: 4px;
-    position: absolute;
-    margin-top: 620px;
+.bannerFilmes {
+  background-color: black;
+  width: 374px;
+  height: 542px;
+  border-radius: 4px;
+  position: absolute;
+  margin-top: 620px;
+  object-fit: cover;
+  object-position: center; /* centraliza a imagem */
 }

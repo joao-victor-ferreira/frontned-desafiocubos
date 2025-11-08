@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-
 import './ModalFilmes.css';
 
 interface ModalFiltrosProps {
@@ -130,7 +129,7 @@ function ModalFilmes({ isOpen, onClose, onApplyFilters }: ModalFiltrosProps) {
   return (
     <>
       <div className="modal-filtros-overlay" onClick={onClose} />
-      
+
       <div className="modal-filtros-container">
         <div className="modal-filtros-header">
           <h2>Filtros</h2>
@@ -140,8 +139,6 @@ function ModalFilmes({ isOpen, onClose, onApplyFilters }: ModalFiltrosProps) {
         </div>
 
         <div className="modal-filtros-content">
-         
-
           {/* Gêneros */}
           <div className="filtro-section">
             <h3 className="filtro-label">Gêneros</h3>

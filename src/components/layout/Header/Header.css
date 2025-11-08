@@ -1,109 +1,171 @@
-
-
-.topbar{
-    width: 100%;
-    height: 76px;
-    position: absolute;
-    top: 0px;
-    z-index: 10;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background-color: #121113;
-    border-bottom: 1px solid #F1E6FD30;
+.topbar {
+  width: 100%;
+  height: 76px;
+  position: absolute;
+  top: 0px;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #121113;
+  border-bottom: 1px solid #f1e6fd30;
 }
 
-
-.left-topbar-row{
-    width: 48%;
-    display: flex;
-    flex-direction: row;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+.logo-topbar-mobile {
+  display: none;
 }
 
-.right{
-    width: 48%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
+.logo-topbar-desktop {
+  display: block;
 }
 
-
-.logo-topbar-desktop{
-    width: 160px;
-    height: 36px;
+.left-topbar-row {
+  width: 48%;
+  display: flex;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-
-.header-h1-movies{
-     font-family: 'Inter', sans-serif;
-     color: white;
-     margin-left: 20px;
-     font-size: 20px;
-     font-weight: 700;
+.right {
+  width: 48%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 
-
-.header-btn-logout{
-    background: #8E4EC6;
-    width: 90px;
-    height: 44px;
-    border: none;
-    border-radius: 2px;
-    color: white;
-      font-family: 'Roboto', sans-serif; 
-      font-weight: 400;
-      cursor: pointer;
-      font-size: 16px;
+.logo-topbar-desktop {
+  width: 160px;
+  height: 36px;
 }
 
-.header-btn-logout:hover{
-    background-color: #B744F714;
-    color: #F1DDFFFA;
+.header-h1-movies {
+  font-family: 'Inter', sans-serif;
+  color: white;
+  margin-left: 20px;
+  font-size: 20px;
+  font-weight: 700;
 }
 
-
-.iconetoggler-topbar-desktop{
-    width: 24px; 
-    height: 24px;
+.header-btn-logout {
+  background: #8e4ec6;
+  width: 90px;
+  height: 44px;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-.header-btn-theme-toggle{
-    width: 64px;
-    height: 44px;
-    margin-right: 10px;
-    background-color: #B744F714;
-    border: none;
-    border-radius: 2px; 
-    cursor: pointer;
+.header-btn-logout:hover {
+  background-color: #b744f714;
+  color: #f1ddfffa;
 }
 
-.header-btn-theme-toggle:hover{
-    background-color: #8E4EC6;
-
+.iconetoggler-topbar-desktop {
+  width: 24px;
+  height: 24px;
 }
 
+.header-btn-theme-toggle {
+  width: 64px;
+  height: 44px;
+  margin-right: 10px;
+  background-color: #b744f714;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.header-btn-icone {
+  color: #f1ddfffa;
+  font-size: 24px;
+}
+
+.header-btn-theme-toggle:hover {
+  background-color: #8e4ec6; /* cor do botão no hover */
+}
+
+/* Faz o ícone dentro do botão ficar branco quando o botão estiver em hover */
+.header-btn-theme-toggle:hover .header-btn-icone {
+  color: white;
+}
 
 /* Celulares */
 @media (max-width: 480px) {
+  .logo-topbar-desktop {
+    display: none;
+  }
 
+  .logo-topbar-mobile {
+    display: block;
+  }
+  .header-h1-movies {
+    font-family: 'Inter', sans-serif;
+    color: white;
+    margin-left: 20px;
+    font-size: 20px;
+    font-weight: 700;
+  }
 }
 
 /* Tablets verticais */
 @media (max-width: 768px) {
-  /* estilos tablet vertical */
+  .logo-topbar-desktop {
+    display: none;
+  }
+
+  .logo-topbar-mobile {
+    display: block;
+  }
+  .header-h1-movies {
+    font-family: 'Inter', sans-serif;
+    color: white;
+    margin-left: 20px;
+    font-size: 20px;
+    font-weight: 700;
+  }
 }
 
 /* Tablets horizontais / notebooks pequenos */
 @media (max-width: 1024px) {
-  /* estilos intermediários */
+  .logo-topbar-desktop {
+    display: none;
+  }
+
+  .logo-topbar-mobile {
+    display: block;
+  }
+
+  .header-h1-movies {
+    font-family: 'Inter', sans-serif;
+    color: white;
+    margin-left: 20px;
+    font-size: 20px;
+    font-weight: 700;
+  }
 }
 
 /* Desktops */
 @media (max-width: 1280px) {
-  /* ajustes desktop médio */
+  .logo-topbar-desktop {
+    display: none;
+  }
+
+  .logo-topbar-mobile {
+    display: block;
+  }
+  .header-h1-movies {
+    font-family: 'Inter', sans-serif;
+    color: white;
+    margin-left: 20px;
+    font-size: 20px;
+    font-weight: 700;
+  }
 }

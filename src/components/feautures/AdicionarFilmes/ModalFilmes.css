@@ -17,7 +17,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   max-width: 569px;
- height: 454px;
+  height: 454px;
   background: #232225;
   border-radius: 4px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
@@ -39,9 +39,9 @@
 }
 
 .modal-filtros-header h2 {
-  font-size:24px;
+  font-size: 24px;
   font-weight: 400;
-  color: #B5B2BC;
+  color: #b5b2bc;
   margin: 0;
   font-family: 'Roboto', sans-serif;
 }
@@ -49,7 +49,7 @@
 .modal-filtros-close {
   background: transparent;
   border: none;
-  color: #B5B2BC;
+  color: #b5b2bc;
   font-size: 24px;
   cursor: pointer;
   display: flex;
@@ -267,26 +267,24 @@
 
 .btn-limpar {
   width: 103px;
-    height: 44px;
-  background: #B744F714;
-  color: #F1DDFFFA;
+  height: 44px;
+  background: #b744f714;
+  color: #f1ddfffa;
   border: none;
   cursor: pointer;
   text-align: center;
 }
 
-
 .btn-aplicar {
-     width: 151px;
-    height: 44px;
-    background-color: #8E4EC6;
-    color: #FFFFFF;
-   font-family: 'Roboto', sans-serif;
- font-weight: 400;
- border: none;
- cursor: pointer;
+  width: 151px;
+  height: 44px;
+  background-color: #8e4ec6;
+  color: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  border: none;
+  cursor: pointer;
 }
-
 
 /* Animações */
 @keyframes fadeIn {

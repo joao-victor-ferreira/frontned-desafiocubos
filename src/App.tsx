@@ -1,13 +1,9 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
-import Rotas from './routes/Rotas'
-
+import Rotas from './routes/Rotas';
 
 function App() {
-  
-  return (
-   <Rotas />
-  )
+  return <Rotas />;
 }
 
-export default App
+export default App;

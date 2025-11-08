@@ -1,6 +1,6 @@
 .movies-section {
   margin-top: 170px;
-  width: 96%;
+  width: 95%;
   min-height: 782px;
   display: flex;
   align-items: center;
@@ -11,13 +11,12 @@
 }
 
 .movies-grid {
-  width: 95%;
+  width: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  justify-content: center;
-  justify-items: center;
-  align-items: center;
-  gap: 30px;
+  grid-template-columns: repeat(5, 1fr); /* 5 cards por linha */
+  gap: 30px; /* espaçamento entre cards */
+  justify-items: start; /* cards alinhados à esquerda */
+  align-items: start; /* cards sempre no topo da linha */
 }
 
 .movie-card {
@@ -103,7 +102,6 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
 }
 
-
 .movie-overlay {
   position: absolute;
   inset: 0;
@@ -131,7 +129,6 @@
   );
 }
 
-
 .movie-title {
   font-size: 16px;
   color: #eeeeee;
@@ -146,4 +143,40 @@
   color: #b4b4b4;
   margin: 0;
   line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+  .movies-section {
+    margin-top: 220px;
+  }
+
+  .movies-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
+
+  .movie-card {
+    width: 173px;
+    height: 271px;
+  }
+}
+
+@media (max-width: 390px) {
+  .movie-card {
+    width: 160px;
+    height: 251px;
+  }
+}
+
+@media (max-width: 768px) {
+  .movies-section {
+    margin-top: 220px;
+    align-items: start;
+  }
+}
+
+@media (max-width: 1024px) {
+}
+
+@media (max-width: 1280px) {
 }

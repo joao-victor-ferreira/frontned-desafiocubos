@@ -1,55 +1,175 @@
-
-
-.filtrosinicio-container{
-    width: 100%;
-    position: absolute;
-    top:100px;
+/* Container principal */
+.filtrosinicio-container {
+  width: 100%;
+  position: absolute;
+  top: 100px;
 }
 
+/* Row de filtros */
+.row-filtrosinicio {
+  display: flex;
+  width: 98%;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
 
-.row-filtrosinicio{
+/* Input de pesquisa */
+.input-pequisarfilme-filtros {
+  width: 488px;
+  height: 44px;
+  border-radius: 4px;
+  background-color: #1a191b;
+  border: 1px solid #49474e;
+  margin-right: 10px;
+  padding-left: 10px;
+  color: #eeeef0;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+.input-pequisarfilme-filtros:focus {
+  outline: none;
+  border: 1px solid #8e4ec6;
+}
+
+/* Buttons */
+.btn-adicionarfilmes-filtros,
+.btn-filtros-filtros {
+  border-radius: 2px;
+  border: none;
+  height: 44px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+/* Button adicionar */
+.btn-adicionarfilmes-filtros {
+  background-color: #8e4ec6;
+  color: white;
+  width: 151px;
+  margin-right: 10px;
+}
+
+.btn-adicionarfilmes-filtros:hover {
+  background-color: #b744f714;
+  color: #f1ddfffa;
+}
+
+/* Button filtros */
+.btn-filtros-filtros {
+  background-color: #b744f714;
+  color: #f1ddfffa;
+  width: 85px;
+  margin-right: 10px;
+}
+
+.btn-filtros-filtros:hover {
+  background-color: #8e4ec6;
+  color: #eeeef0;
+}
+
+/* === Responsividade === */
+
+/* Mobile */
+@media (max-width: 480px) {
+  .row-filtrosinicio {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .input-pequisarfilme-filtros {
+    width: 95%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .btn-adicionarfilmes-filtros {
+    width: 242px;
+    margin-top: 10px;
+    margin-right: 0;
+  }
+
+  .btn-filtros-filtros {
+    width: 136px;
+    margin-top: 10px;
+    margin-right: 0;
+  }
+}
+
+/* Tablets verticais */
+@media (max-width: 768px) {
+  .row-filtrosinicio {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .input-pequisarfilme-filtros {
+    width: 95%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .btn-adicionarfilmes-filtros {
+    width: 242px;
+    margin-top: 10px;
+    margin-right: 0;
+  }
+
+  .btn-filtros-filtros {
+    width: 136px;
+    margin-top: 10px;
+    margin-right: 0;
+  }
+}
+
+/* Tablets horizontais / notebooks pequenos */
+@media (max-width: 1024px) {
+  /* Mantém largura de input e buttons, caso queira ajustes específicos pode adicionar aqui */
+}
+
+/* Desktops pequenos */
+@media (max-width: 1280px) {
+  /* Mantém largura padrão, ajustes específicos se necessário */
+}
+
+@media (max-width: 390px) {
+  .row-filtrosinicio {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filtrosinicio-buttons {
     display: flex;
-    width: 98%;
-    flex-direction: row;
-    justify-content: end;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-}
+  .filtrosinicio-buttons {
+    display: flex;
+    width: 95%;
+  }
 
-.input-pequisarfilme-filtros{
-    width: 488px;
-    height: 44px;
-    border-radius: 4px;
-    background-color: #1A191B;
-    border: 1px solid #49474E;
-    margin-right: 10px;
-    padding-left: 10px;
-}
-
-.btn-adicionarfilmes-filtros{
-     background-color: #8E4EC6;
-     border: none;
-     color: white;
-     font-size: 16px;
-     font-weight: 400;
-     width: 151px;
-     height: 44px;
-     border-radius: 2px;
-     cursor: pointer;
-      font-family: 'Roboto', sans-serif; 
-
-}
-
-
-.btn-filtros-filtros{
-    background-color: #B744F714;
-    width: 85px;
-    height: 44px;
-    border-radius: 2px;
-    border: none;
-    margin-right: 10px;
-    font-weight: 400;
-    border-radius: 2px;
-    color: #F1DDFFFA;
-    font-size: 16px;
-     font-family: 'Roboto', sans-serif; 
+  .input-pequisarfilme-filtros {
+    width: 95%;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  .btn-adicionarfilmes-filtros {
+    width: 200px;
+    margin-top: 10px;
+    margin-right: 0;
+  }
+  .btn-filtros-filtros {
+    margin-right: 0px;
+  }
 }

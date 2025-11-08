@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
-import './DrawerAdicionarFilmes.css';
+// components/feautures/FilmesDetalhesComponents/DrawerEditarFilmes.tsx
+import React, { useState, useEffect } from 'react';
+
+import './DrawerEditarFilmes.css';
 import { filmeService } from '../../../services/filme.service';
-import { Movie } from '../../../services/filme.service';
 import { useToast } from '../../toast/useToast';
 
-interface DrawerAdicionarFilmeProps {
-  isOpen: boolean;
-  onClose: () => void;
+export interface MovieFormData {
+  id?: number;
+  titulo: string;
+  tituloOriginal: string;
+  subtitulo: string;
+  sinopse: string;
+  classificacao: string;
+  votos: number;
+  duracao: number;
+  lancamento: string;
+  idioma: string;
+  situacao: string;
+  orcamento: number;
+  receita: number;
+  lucro: number;
+  genero: string[];
+  rating: number;
+  bannerUrl: string;
+  trailerUrl: string;
 }
 
-interface MovieFormData extends Omit<Movie, 'id'> {}
+interface DrawerEditarFilmeProps {
+  isOpen: boolean;
+  onClose: () => void;
+  filmeParaEditar?: MovieFormData; // Se houver, o Drawer será de edição
+  onFilmeAtualizado?: (filme: MovieFormData) => void; // callback após atualização
+}
 
 const TODOS_GENEROS = [
   'Ação',
@@ -32,8 +54,15 @@ const TODOS_GENEROS = [
   'Terror',
 ];
 
-const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, onClose }) => {
-  const { showToast } = useToast(); // 🔹 Usando toast global
+const DrawerEditarFilmes: React.FC<DrawerEditarFilmeProps> = ({
+  isOpen,
+  onClose,
+  filmeParaEditar,
+  onFilmeAtualizado,
+}) => {
+  const { showToast } = useToast();
+  const [carregando, setCarregando] = useState(false);
+
   const [formData, setFormData] = useState<MovieFormData>({
     titulo: '',
     tituloOriginal: '',
@@ -48,13 +77,38 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
     orcamento: 0,
     receita: 0,
     lucro: 0,
-    generos: [],
+    genero: [],
     rating: 0,
     bannerUrl: '',
     trailerUrl: '',
   });
 
-  const [carregando, setCarregando] = useState(false);
+  // Preenche o formulário se estiver editando
+  useEffect(() => {
+    if (filmeParaEditar) {
+      setFormData(filmeParaEditar);
+    } else {
+      setFormData({
+        titulo: '',
+        tituloOriginal: '',
+        subtitulo: '',
+        sinopse: '',
+        classificacao: '',
+        votos: 0,
+        duracao: 0,
+        lancamento: '',
+        idioma: '',
+        situacao: 'Lançado',
+        orcamento: 0,
+        receita: 0,
+        lucro: 0,
+        genero: [],
+        rating: 0,
+        bannerUrl: '',
+        trailerUrl: '',
+      });
+    }
+  }, [filmeParaEditar]);
 
   if (!isOpen) return null;
 
@@ -72,35 +126,12 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
 
   const handleGenerosChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = Array.from(e.target.selectedOptions, option => option.value);
-    setFormData(prev => ({ ...prev, generos: selected }));
-  };
-
-  const limparFormulario = () => {
-    setFormData({
-      titulo: '',
-      tituloOriginal: '',
-      subtitulo: '',
-      sinopse: '',
-      classificacao: '',
-      votos: 0,
-      duracao: 0,
-      lancamento: '',
-      idioma: '',
-      situacao: 'Lançado',
-      orcamento: 0,
-      receita: 0,
-      lucro: 0,
-      generos: [],
-      rating: 0,
-      bannerUrl: '',
-      trailerUrl: '',
-    });
+    setFormData(prev => ({ ...prev, genero: selected }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🔹 Validação manual usando toast
     if (!formData.titulo.trim()) {
       showToast('O campo Título é obrigatório', 'erro');
       return;
@@ -109,7 +140,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
       showToast('O campo Título Original é obrigatório', 'erro');
       return;
     }
-    if (formData.generos.length === 0) {
+    if (formData.genero.length === 0) {
       showToast('Selecione pelo menos um gênero', 'erro');
       return;
     }
@@ -120,13 +151,20 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Token não encontrado. Faça login novamente.');
 
-      await filmeService.criarFilme(formData, token);
+      if (filmeParaEditar) {
+        // Atualiza o filme existente
+        await filmeService.atualizarFilme(filmeParaEditar.id!, formData, token);
+        showToast('Filme atualizado com sucesso!', 'sucesso');
+        onFilmeAtualizado?.(formData);
+      } else {
+        // Cria novo filme
+        await filmeService.criarFilme(formData, token);
+        showToast('Filme adicionado com sucesso!', 'sucesso');
+      }
 
-      showToast('Filme adicionado com sucesso!', 'sucesso');
-      limparFormulario();
       onClose();
     } catch (err: any) {
-      showToast(err.message || 'Erro ao adicionar filme. Tente novamente.', 'erro');
+      showToast(err.message || 'Erro ao salvar filme', 'erro');
     } finally {
       setCarregando(false);
     }
@@ -137,7 +175,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
       <div className="drawer-overlay" onClick={onClose} />
       <div className={`drawer-container ${isOpen ? 'open' : ''}`}>
         <div className="drawer-header">
-          <h2>Adicionar Filme</h2>
+          <h2>{filmeParaEditar ? 'Editar Filme' : 'Adicionar Filme'}</h2>
           <button className="drawer-close-btn" onClick={onClose}>
             ✕
           </button>
@@ -145,7 +183,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
 
         <form className="drawer-form" onSubmit={handleSubmit}>
           <div className="drawer-scroll-content">
-            {/* ---- Informações Básicas ---- */}
+            {/* Informações Básicas */}
             <div className="form-section">
               <div className="form-group">
                 <label>Título *</label>
@@ -180,7 +218,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
               </div>
             </div>
 
-            {/* ---- Classificação ---- */}
+            {/* Classificação e Avaliação */}
             <div className="form-section">
               <h3 className="section-title">⭐ Classificação e Avaliação</h3>
               <div className="form-row">
@@ -219,7 +257,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
               </div>
             </div>
 
-            {/* ---- Produção ---- */}
+            {/* Produção */}
             <div className="form-section">
               <h3 className="section-title">🎬 Detalhes de Produção</h3>
               <div className="form-row">
@@ -266,7 +304,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
                 <select
                   multiple
                   name="generos"
-                  value={formData.generos}
+                  value={formData.genero}
                   onChange={handleGenerosChange}
                 >
                   {TODOS_GENEROS.map((g, i) => (
@@ -279,7 +317,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
               </div>
             </div>
 
-            {/* ---- Finanças ---- */}
+            {/* Finanças */}
             <div className="form-section">
               <h3 className="section-title">💰 Informações Financeiras</h3>
               <div className="form-group">
@@ -306,7 +344,7 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
               </div>
             </div>
 
-            {/* ---- Mídia ---- */}
+            {/* Mídia */}
             <div className="form-section">
               <h3 className="section-title">🔗 Mídia</h3>
               <div className="form-group">
@@ -330,13 +368,19 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
             </div>
           </div>
 
-          {/* ---- Footer ---- */}
+          {/* Footer */}
           <div className="drawer-footer">
             <button type="button" className="btn-cancelar" onClick={onClose} disabled={carregando}>
               Cancelar
             </button>
             <button type="submit" className="btn-adicionar" disabled={carregando}>
-              {carregando ? 'Adicionando...' : 'Adicionar Filme'}
+              {carregando
+                ? filmeParaEditar
+                  ? 'Atualizando...'
+                  : 'Adicionando...'
+                : filmeParaEditar
+                  ? 'Atualizar Filme'
+                  : 'Adicionar Filme'}
             </button>
           </div>
         </form>
@@ -345,4 +389,4 @@ const DrawerAdicionarFilmes: React.FC<DrawerAdicionarFilmeProps> = ({ isOpen, on
   );
 };
 
-export default DrawerAdicionarFilmes;
+export default DrawerEditarFilmes;

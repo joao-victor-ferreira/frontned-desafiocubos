@@ -1,34 +1,42 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { userService } from "../../../services/user.services";
-import "./FormularioLogin.css";
-import "../../../assets/css/Global.css"
+import { userService } from '../../../services/user.services';
+import { useToast } from '../../toast/useToast';
+import './FormularioLogin.css';
+import '../../../assets/css/Global.css';
 
+// Tipagem para o formulário
+interface LoginFormData {
+  email: string;
+  senha: string;
+}
 
-function FormularioLogin() {
+const FormularioLogin: React.FC = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [mensagem, setMensagem] = useState("");
-  const [tipoMensagem, setTipoMensagem] = useState<"sucesso" | "erro" | "">("");
+  const { showToast } = useToast();
+
+  // Estado do formulário
+  const [formData, setFormData] = useState<LoginFormData>({ email: '', senha: '' });
   const [carregando, setCarregando] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMensagem("");
-    setTipoMensagem("");
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-    // Validações básicas
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { email, senha } = formData;
+
     if (!email.trim()) {
-      setMensagem("Por favor, insira seu e-mail");
-      setTipoMensagem("erro");
+      showToast('Por favor, insira seu e-mail', 'erro');
       return;
     }
 
     if (!senha.trim()) {
-      setMensagem("Por favor, insira sua senha");
-      setTipoMensagem("erro");
+      showToast('Por favor, insira sua senha', 'erro');
       return;
     }
 
@@ -37,95 +45,92 @@ function FormularioLogin() {
     try {
       const response = await userService.login(email, senha);
 
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("user", JSON.stringify(response.user));
+      // Salva token e usuário no localStorage
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
 
-      setMensagem("Login realizado com sucesso! Redirecionando...");
-      setTipoMensagem("sucesso");
+      showToast('Login realizado com sucesso! Redirecionando...', 'sucesso');
 
-      setTimeout(() => {
-        navigate("/inicio");
-      }, 1000);
+      navigate('/inicio');
     } catch (err: any) {
-      let mensagemErro = "Erro ao fazer login. Tente novamente.";
+      let mensagemErro = 'Erro ao fazer login. Tente novamente.';
 
-      if (err.message) {
-        if (err.message.includes("credenciais") || err.message.includes("senha")) {
-          mensagemErro = "E-mail ou senha incorretos";
-        } else if (err.message.includes("rede") || err.message.includes("network")) {
-          mensagemErro = "Erro de conexão. Verifique sua internet";
-        } else if (err.message.includes("não encontrado")) {
-          mensagemErro = "Usuário não encontrado";
-        } else {
-          mensagemErro = err.message;
-        }
+      if (err.message?.includes('senha')) {
+        mensagemErro = 'E-mail ou senha incorretos.';
+      } else if (err.message?.includes('rede')) {
+        mensagemErro = 'Erro de conexão. Verifique sua internet.';
+      } else if (err.message?.includes('não encontrado')) {
+        mensagemErro = 'Usuário não encontrado.';
       }
 
-      setMensagem(mensagemErro);
-      setTipoMensagem("erro");
+      showToast(mensagemErro, 'erro');
     } finally {
       setCarregando(false);
     }
+  };
+
+  const handleForgotPassword = () => {
+    // Redireciona para a página de recuperação de senha
+    navigate('/recuperar-senha');
   };
 
   return (
     <div className="login-form-container">
       <div className="background-overlay" />
 
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleLogin}>
+        {/* Campo E-mail */}
         <div className="forms-group">
           <label htmlFor="email" className="form-label">
-            E-mail
+            Nome/E-mail
           </label>
           <input
-            type="email"
             id="email"
+            name="email"
+            type="email"
             className="form-input"
             placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formData.email}
+            onChange={handleChange}
             disabled={carregando}
           />
         </div>
 
+        {/* Campo Senha */}
         <div className="forms-group">
           <label htmlFor="senha" className="form-label">
             Senha
           </label>
           <input
-            type="password"
             id="senha"
+            name="senha"
+            type="password"
             className="form-input"
             placeholder="Digite sua senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
+            value={formData.senha}
+            onChange={handleChange}
             disabled={carregando}
           />
         </div>
 
+        {/* Linha de opções */}
         <div className="row-options-form">
-          <h1 className="esqueceuasenha">Esqueceu a senha?</h1>
-          <button 
-            type="submit" 
-            className="login-form-btn"
+          <button
+            type="button"
+            className="esqueceuasenha"
+            onClick={handleForgotPassword}
             disabled={carregando}
           >
-            {carregando ? "Entrando..." : "Entrar"}
+            Esqueceu a senha?
+          </button>
+
+          <button type="submit" className="login-form-btn" disabled={carregando}>
+            {carregando ? <span className="spinner" aria-label="Carregando"></span> : 'Entrar'}
           </button>
         </div>
-
       </form>
-
-      {mensagem && (
-        <div className={`mensagem-feedback-flutuante ${tipoMensagem}`}>
-          <span className="mensagem-icone">
-            {tipoMensagem === "sucesso" ? "✓" : "⚠"}
-          </span>
-          <p>{mensagem}</p>
-        </div>
-      )}
     </div>
   );
-}
+};
 
 export default FormularioLogin;

@@ -1,16 +1,17 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Pega a URL da variável de ambiente
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const apiClient = axios.create({
   baseURL: API_URL,
-  headers: { "Content-Type": "application/json" },
+  headers: { 'Content-Type': 'application/json' },
   timeout: 5000,
 });
 
 // Adiciona token JWT automaticamente
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+apiClient.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -19,10 +20,10 @@ apiClient.interceptors.request.use((config) => {
 
 // Tratamento global de erros
 apiClient.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
-    if (error.response) throw new Error(error.response.data.error || "Erro na API");
-    else if (error.request) throw new Error("Sem resposta do servidor");
+  response => response.data, // retorna apenas `data`
+  error => {
+    if (error.response) throw new Error(error.response.data.error || 'Erro na API');
+    else if (error.request) throw new Error('Sem resposta do servidor');
     else throw new Error(error.message);
   }
 );

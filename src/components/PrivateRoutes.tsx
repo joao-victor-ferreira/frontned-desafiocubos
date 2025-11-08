@@ -1,12 +1,12 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
 interface PrivateRouteProps {
   children: React.ReactNode; // ✅ ReactNode é o tipo correto para JSX children
 }
 
 export const PrivateRoute = ({ children }: PrivateRouteProps) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
 
   if (!token) {
     // Usuário não logado → redireciona

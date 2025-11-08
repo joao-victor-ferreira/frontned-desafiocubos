@@ -1,20 +1,15 @@
+// components/FilmesCartaz/FilmesCartaz.tsx
 import React, { useState, useEffect } from 'react';
 import { Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './FilmesCartaz.css';
+import { filmeService, Movie } from '../../../services/filme.service';
 
-interface Movie {
-  _id?: string;
-  id?: number;
-  titulo: string;
-  tituloOriginal?: string;
-  subtitulo?: string;
-  sinopse?: string;
-  generos?: string[] | string;
-  imagem?: string;
+interface FilmesCartazProps {
+  searchTerm: string;
 }
 
-const FilmesCartaz: React.FC = () => {
+const FilmesCartaz: React.FC<FilmesCartazProps> = ({ searchTerm }) => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [watchingMovies, setWatchingMovies] = useState<{ [key: string]: number }>({});
   const [loadingMovies, setLoadingMovies] = useState<{ [key: string]: boolean }>({});
@@ -22,15 +17,11 @@ const FilmesCartaz: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // 🔥 Buscar filmes da API
   useEffect(() => {
     const fetchFilmes = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/filmes');
-        const data = await response.json();
-
-        console.log('📽️ Dados recebidos da API:', data);
-        setMovies(data.filmes || []); // ✅ Ajuste aqui
+        const filmes = await filmeService.listarFilmes(); // ✅ já retorna Movie[]
+        setMovies(filmes);
       } catch (error) {
         console.error('Erro ao buscar filmes:', error);
       } finally {
@@ -41,47 +32,42 @@ const FilmesCartaz: React.FC = () => {
     fetchFilmes();
   }, []);
 
-  const handlePlayClick = (e: React.MouseEvent, movie: Movie) => {
-    e.stopPropagation();
-    const movieId = movie._id || movie.id?.toString() || '';
-    if (loadingMovies[movieId]) return;
+  // Filtra os filmes pelo searchTerm
+  const filteredMovies = movies.filter(movie =>
+    movie.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    setLoadingMovies((prev) => ({ ...prev, [movieId]: true }));
-    let progress = 0;
-
-    const interval = setInterval(() => {
-      progress += 5;
-      if (progress >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          setLoadingMovies((prev) => ({ ...prev, [movieId]: false }));
-          setWatchingMovies((prev) => ({ ...prev, [movieId]: 0 }));
-
-          // 👉 Envia para página de detalhes com state
-          navigate(`/filmesdetalhes/${movieId}`, { state: movie });
-        }, 200);
-      } else {
-        setWatchingMovies((prev) => ({ ...prev, [movieId]: progress }));
-      }
-    }, 100);
-  };
-
-  if (loading) {
-    return <div className="loading-text">Carregando filmes...</div>;
-  }
-
-  if (movies.length === 0) {
+  if (loading) return <div className="loading-text">Carregando filmes...</div>;
+  if (filteredMovies.length === 0)
     return <div className="loading-text">Nenhum filme encontrado 😕</div>;
-  }
 
   return (
     <div className="movies-section">
       <div className="movies-grid">
-        {movies.map((movie) => {
-          const movieId = movie._id || movie.id?.toString() || '';
+        {filteredMovies.map(movie => {
+          const movieId = movie.id.toString();
           const isHovered = hoveredCard === movieId;
           const isLoading = loadingMovies[movieId];
           const progress = watchingMovies[movieId] || 0;
+
+          const handlePlayClick = () => {
+            if (isLoading) return;
+            setLoadingMovies(prev => ({ ...prev, [movieId]: true }));
+            let prog = 0;
+            const interval = setInterval(() => {
+              prog += 5;
+              if (prog >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                  setLoadingMovies(prev => ({ ...prev, [movieId]: false }));
+                  setWatchingMovies(prev => ({ ...prev, [movieId]: 0 }));
+                  navigate(`/filmesdetalhes/${movieId}`, { state: movie });
+                }, 200);
+              } else {
+                setWatchingMovies(prev => ({ ...prev, [movieId]: prog }));
+              }
+            }, 100);
+          };
 
           return (
             <div
@@ -92,7 +78,7 @@ const FilmesCartaz: React.FC = () => {
             >
               <div className="movie-card-inner">
                 <img
-                  src={movie.imagem || 'https://via.placeholder.com/300x450?text=Sem+Imagem'}
+                  src={movie.bannerUrl || 'https://via.placeholder.com/300x450?text=Sem+Imagem'}
                   alt={movie.titulo}
                   className="movie-image"
                 />
@@ -122,7 +108,7 @@ const FilmesCartaz: React.FC = () => {
                 {!isLoading && (
                   <div
                     className={`movie-play-overlay ${isHovered ? 'visible' : ''}`}
-                    onClick={(e) => handlePlayClick(e, movie)}
+                    onClick={handlePlayClick}
                   >
                     <Play size={64} color="#fff" />
                   </div>
@@ -132,9 +118,9 @@ const FilmesCartaz: React.FC = () => {
                   <h3 className="movie-title">{movie.titulo}</h3>
                   {isHovered && (
                     <p className="movie-genres">
-                      {Array.isArray(movie.generos)
-                        ? movie.generos.join(', ')
-                        : movie.generos || 'Gênero não informado'}
+                      {Array.isArray(movie.genero)
+                        ? movie.genero.join(', ')
+                        : movie.genero || 'Gênero não informado'}
                     </p>
                   )}
                 </div>

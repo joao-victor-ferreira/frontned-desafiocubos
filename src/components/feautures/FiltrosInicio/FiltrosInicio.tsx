@@ -4,52 +4,51 @@ import DrawerAdicionarFilme from '../AdicionarFilmes/DrawerAdicionarFilmes';
 import ModalFiltros, { FiltrosData } from '../AdicionarFilmes/ModalFilmes';
 import './FiltroInicio.css';
 
-function FiltrosInicio() {
+interface FiltrosInicioProps {
+  searchTerm: string;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const FiltrosInicio: React.FC<FiltrosInicioProps> = ({ searchTerm, setSearchTerm }) => {
+  // Estados de abertura de modal/drawer
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalFiltrosOpen, setIsModalFiltrosOpen] = useState(false);
 
-  const handleOpenDrawer = () => {
-    setIsDrawerOpen(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
-
-  const handleOpenFiltros = () => {
-    setIsModalFiltrosOpen(true);
-  };
-
-  const handleCloseFiltros = () => {
-    setIsModalFiltrosOpen(false);
-  };
+  // Funções de controle
+  const toggleDrawer = (open: boolean) => setIsDrawerOpen(open);
+  const toggleModalFiltros = (open: boolean) => setIsModalFiltrosOpen(open);
 
   const handleApplyFilters = (filters: FiltrosData) => {
     console.log('Filtros aplicados:', filters);
-    // Aqui você pode fazer a chamada para a API com os filtros
+    // Aqui você pode fazer a chamada para a API com os filtros aplicados
   };
 
   return (
     <>
-      <div className='filtrosinicio-container'>
-        <div className='row-filtrosinicio'>
-          <div>
-            <input 
-              className='input-pequisarfilme-filtros' 
-              placeholder='Pesquise por filmes' 
-            />
-          </div>
+      <div className="filtrosinicio-container">
+        <div className="row-filtrosinicio">
+          {/* Campo de pesquisa */}
+          <input
+            className="input-pequisarfilme-filtros"
+            placeholder="Pesquise por filmes"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+          />
 
-          <div>
-            <button 
-              className='btn-filtros-filtros'
-              onClick={handleOpenFiltros}
+          {/* Botões */}
+          <div className="filtrosinicio-buttons">
+            <button
+              className="btn-filtros-filtros"
+              type="button"
+              onClick={() => toggleModalFiltros(true)}
             >
               Filtros
             </button>
-            <button 
-              className='btn-adicionarfilmes-filtros'
-              onClick={handleOpenDrawer}
+
+            <button
+              className="btn-adicionarfilmes-filtros"
+              type="button"
+              onClick={() => toggleDrawer(true)}
             >
               Adicionar Filme
             </button>
@@ -57,18 +56,17 @@ function FiltrosInicio() {
         </div>
       </div>
 
-      <DrawerAdicionarFilme 
-        isOpen={isDrawerOpen} 
-        onClose={handleCloseDrawer} 
-      />
+      {/* Drawer para adicionar filme */}
+      <DrawerAdicionarFilme isOpen={isDrawerOpen} onClose={() => toggleDrawer(false)} />
 
+      {/* Modal de filtros */}
       <ModalFiltros
         isOpen={isModalFiltrosOpen}
-        onClose={handleCloseFiltros}
+        onClose={() => toggleModalFiltros(false)}
         onApplyFilters={handleApplyFilters}
       />
     </>
   );
-}
+};
 
 export default FiltrosInicio;
